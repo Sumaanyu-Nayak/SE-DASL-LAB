@@ -34,6 +34,10 @@ void insert(int hash[][2], int key){
 
 }
 
+void search(int hash[][2]){
+
+}
+
 bool isFull(int hash[][2]){
     int i =0;
     while(true){
