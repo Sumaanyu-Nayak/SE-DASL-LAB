@@ -2,6 +2,7 @@
 using namespace std;
 
 void insert(int hash[][2], int key){
+    int tempHash = key%10;
     int loc = key%10;
     while (true)
     {
@@ -9,10 +10,10 @@ void insert(int hash[][2], int key){
             hash[loc][0]= key;
             break;
         }
-        else if(hash[loc][1] != -1){
+        else if(hash[loc][1] != -1 && hash[loc][0]%10==tempHash){
             loc = hash[loc][1];
         }
-        else if(hash[loc][1]==-1){
+        else if(hash[loc][1]==-1 && hash[loc][0]%10==tempHash){
             int tempLoc = loc+1;
             while (true)
             {
@@ -27,7 +28,14 @@ void insert(int hash[][2], int key){
             hash[tempLoc][0] = key;
             hash[loc][1]=tempLoc;
             break;
-            
+        }
+        else{
+            if(loc>=9){
+                loc=0;
+            }
+            else{
+                loc++;
+            }
         }
     }
     
@@ -53,7 +61,7 @@ void display(int hash[][2]){
     cout<<"Ind"<<" "<<"Hash"<<" "<<"Chain"<<endl;
     for (int i = 0; i < 10; i++)
     {
-        cout<<hash[i][0]<<" "<< hash[i][1]<<endl;
+        cout<<i<<" "<<hash[i][0]<<" "<< hash[i][1]<<endl;
 
     }
     
@@ -88,6 +96,8 @@ int main(){
         case 2:
             display(hash);
             break;
+        case 3:
+            exit(0);
         
         default:
             cout<<"\n Please enter a correct option"<< endl;
