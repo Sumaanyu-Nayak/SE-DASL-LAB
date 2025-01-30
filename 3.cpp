@@ -1,135 +1,135 @@
-#include <bits/stdc++.h>
+#include <iostream>
 using namespace std;
 
-void insert(int hash[][2], int key){
-    int loc = key%10;
-    int prvLoc=-2;
-    int temp [2];
-    while(true){
-        if(hash[loc][0]==-1){
-            hash[loc][0]=key;
-            if(prvLoc!=-2){
-                hash[prvLoc][1]=loc;
-            }
-            break;
-        }
-        else if(hash[loc][0]%10!=loc && hash[loc][0]%10!=key%10){
-            temp[0] = hash[loc][0];
-            temp[1] = hash[loc][1];
-            hash[loc][0]=key;
-            hash[loc][1]=-1;
-            int tempLoc = loc;
-            loc = temp[0]%10;
-            while (true)
-            {
-                if(hash[loc][1]!=tempLoc){
-                    loc = hash[loc][1];
-                    continue;
-                }
-                else{
-                    hash[loc][1] = -1;
-                }
-            }
-            insert(hash,key);
-            break;
-            // int tempLoc = loc+1;
-            // int modTemp = temp[0]%10;
-            // while (true)
-            // {
-            //     if(tempLoc>10){
-            //         tempLoc = 0;
-            //     }
-            //     else if(hash[tempLoc][0]==-1){
-            //         break;
-            //     }
-            //     tempLoc++;
-            // }
-            // hash[tempLoc][0] = temp[0];
-            // hash[loc][1]=tempLoc;
-            // break;
-        }
-        else{
-            if(hash[loc][1] != -1){
-                loc = hash[loc][1];
-                continue;
-            }
-            else if(hash[loc][1]==-1){
-                if(hash[loc][0]%10 == key%10){
-                    prvLoc=loc;
-                }
-                if(loc>=9){
-                    loc=0;
-                    continue;
-                }
-                loc++;
-                continue;
-            }
-        }
+class HashTable
+{
+public:
+    int arr[10][2];
 
-    }
-}
-
-void search(int hash[][2]){
-
-}
-
-bool isFull(int hash[][2]){
-    int i =0;
-    while(true){
-        if(hash[i][0]==-1){
-            return false;
-        }
-        i++;
-    }
-    return true;
-}
-
-void display(int hash[][2]){
-    cout<<"Ind"<<" "<<"Hash"<<" "<<"Chain"<<endl;
-    for (int i = 0; i < 10; i++)
+    HashTable()
     {
-        cout<<i<<" "<<hash[i][0]<<" "<< hash[i][1]<<endl;
-
-    }
-    
-}
-
-int main(){
-    int hash[10][2];
-    for (int i = 0; i < 10; i++)
-    {
-        for (int j = 0; j < 2; j++)
+        for (int j = 0; j < 10; j++)
         {
-            hash[i][j]=-1;
+            arr[j][0] = -1;
+            arr[j][1] = -1;
         }
-        
     }
 
-    string menu ="Enter your choice: \n1. Add\n2. Display\n3. Exit";
-    int opt;
-    do
+    int hash(int value)
     {
-        cout<<menu<<endl;
-        cout<<"Your choice: ";
-        cin>>opt;
-        switch (opt)
+        return value % 10;
+    }
+
+    bool isFull()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            if (arr[i][0] == -1)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    void insert(int n)
+    {
+        int loc = hash(n);
+        if (isFull())
+        {
+            cout << "Hash Table is full, cannot insert " << n << endl;
+            return;
+        }
+        else
+        {
+            if (arr[loc][0] == -1)
+            {
+                arr[loc][0] = n;
+                cout << "Inserted " << n << " at index " << loc << endl;
+            }
+            else if (arr[loc][0] % 10 != loc)
+            {
+                for (int i = loc; i < loc + 10; i++)
+                {
+                    int j = i % 10;
+                    if (arr[j][0] == -1)
+                    {
+                        arr[j][0] = arr[loc][0];
+                        arr[j][1] = arr[loc][1];
+                        for (int i = 0; i < 10; i++)
+                        {
+                            if (arr[i][1] == loc)
+                            {
+                                arr[i][1] = j;
+                            }
+                        }
+                        break;
+                    }
+                }
+                arr[loc][0] = n;
+                arr[loc][1] = -1;
+                return;
+            }
+            else if (arr[loc][0] % 10 == loc)
+            {
+                while (arr[loc][1] != -1)
+                {
+                    loc = arr[loc][1];
+                }
+                for (int i = loc; i < loc + 10; i++)
+                {
+                    int j = i % 10;
+                    if (arr[j][0] == -1)
+                    {
+                        arr[j][0] = n;
+                        arr[loc][1] = j;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    void display()
+    {
+        cout << "Ind Key Chain" << endl;
+        for (int i = 0; i < 10; i++)
+        {
+            cout << i << " " << arr[i][0] << " " << arr[i][1] << endl;
+        }
+    }
+};
+
+int main()
+{
+    HashTable table;
+    int choice, value;
+
+    while (true)
+    {
+        cout << "Menu:\n";
+        cout << "1. Insert value\n";
+        cout << "2. Display array\n";
+        cout << "3. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice)
         {
         case 1:
-            cout<<"\nEnter the element: ";
-            int key;
-            cin>>key;
-            insert(hash,key);
+            cout << "Enter value to insert: ";
+            cin >> value;
+            table.insert(value);
             break;
         case 2:
-            display(hash);
+            table.display();
             break;
         case 3:
-            exit(0);
+            return 0;
         default:
-            cout<<"\n Please enter a correct option"<< endl;
-            break;
+            cout << "Invalid choice, try again.\n";
         }
-    } while (true);
-    
-    
+    }
+
+    return 0;
 }
