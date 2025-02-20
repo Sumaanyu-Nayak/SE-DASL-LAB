@@ -48,7 +48,7 @@ public:
     int number_of_nodes(node *);
     node *copy_tree(node *);
     node *mirror_image(node *);
-    bool check_for_equal();
+    bool check_for_equal(node *r1, node *r2);
     void level_order();
 };
 
@@ -96,22 +96,6 @@ void tree::insert_iterative(int key)
     }
     cout << "\t Element Inserted!! \n";
 }
-
-/* void tree::insert_recursive(node *root, int value)
-{
-    if(root == NULL)
-    {
-
-    }
-    if(value > root->data)
-    {
-        root->right = insert_recursive(root->right, value);
-    }
-    if(value < root->data)
-    {
-        root->left = insert_recursive(root->left, value);
-    }
-} */
 
 void tree::preorder_recursive(node *root)
 {
@@ -395,9 +379,18 @@ void tree::insert_binary_tree(int value)
     cout << "\t Element Inserted!! \n";
 }
 
+bool tree::check_for_equal(node *r1, node *r2)
+{
+    if (r1 == NULL && r2 == NULL)
+        return true;
+    if (r1 == NULL || r2 == NULL || r1->data != r2->data)
+        return false;
+    return (check_for_equal(r1->left, r2->left) && check_for_equal(r1->right, r2->right));
+}
+
 int main()
 {
-    tree bst, bt;
+    tree bst, bt, bst2;
     int op_choice = 0;
     cout << "\n Choose from the following ::";
     cout << "\n 1. Insert \n 2. Display \n 3. Search \n 4. Delete \n 5. Number of Nodes";
@@ -411,25 +404,10 @@ int main()
         {
         case 1:
         {
-            int insert_choice = 0;
-            cout << "\n\t 1. Insert Iteratively \t 2. Insert Recursively";
-            cout << "\n\t Enter Your Choice :: ";
-            cin >> insert_choice;
             int key;
             cout << "\t Enter the value to Insert :: ";
             cin >> key;
-            switch (insert_choice)
-            {
-            case 1:
-                bst.insert_iterative(key);
-                break;
-            case 2:
-                // bst.insert_recursive(t.return_root(), key);
-                break;
-            default:
-                cout << "\n No Such Choice!!";
-                break;
-            }
+            bst.insert_iterative(key);
         }
         break;
         case 2:
@@ -490,10 +468,15 @@ int main()
             }
             else
             {
-                cout << "\t Value is !Present in the Tree!! \n";
+                cout << "\t Value is NOT Present in the Tree!! \n";
             }
             break;
         case 4:
+            int va;
+            cout << "\t Enter the Value to Delete :: ";
+            cin >> va;
+            bst.delete_node(va);
+            break;
         case 5:
             cout << "\t The Number of Nodes in the tree are --> " << bst.number_of_nodes(bst.return_root()) << endl;
             break;
@@ -521,28 +504,36 @@ int main()
             cout << endl;
             break;
         case 9:
-            int va;
-            cout << "\t Enter the Value to Delete :: ";
-            cin >> va;
-            bst.delete_node(va);
+            cout << "Enter values for the second tree (end with -1): " << endl;
+            int key;
+            while (true)
+            {
+                cout << "\t Enter the value to Insert :: ";
+                cin >> key;
+                if (key == -1) break;
+                bst2.insert_iterative(key);
+            }
+            if (bst.check_for_equal(bst.return_root(), bst2.return_root()))
+            {
+                cout << "\n The trees are equal!" << endl;
+            }
+            else
+            {
+             cout << "\n The trees are not equal!" << endl;
+            }
             break;
         case 10:
             int val;
-            cout << "\t Enter the value to Insert :: ";
+            cout << "\t Enter the value to Insert into Binary Tree :: ";
             cin >> val;
-            bt.insert_binary_tree(val);
+            bst.insert_binary_tree(val);
             break;
         case 11:
-            cout << "\n\t PRE-ORDER --> ";
-            bt.preorder_iterative(bt.return_root());
-            cout << "\n\t IN-ORDER --> ";
-            bt.inorder_iterative(bt.return_root());
-            cout << "\n\t POST-ORDER --> ";
-            bt.postorder_iterative(bt.return_root());
-            cout << "\n\t LEVEL-ORDER --> ";
-            bt.level_order();
-            cout << endl;
-        case 12:
+            cout << "\n The Binary Tree is :: ";
+            bst.level_order();
+            break;
+        default:
+            cout << "\n Exiting...\n";
             break;
         }
     }
